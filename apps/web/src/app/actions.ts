@@ -4,7 +4,7 @@ import {
   ContactRequestInputSchema,
   createContactRequest,
   type ContactRequestInput,
-} from '@psicoiris/database';
+} from '@psicoiris/database/server';
 
 export interface ContactActionResult {
   ok: boolean;

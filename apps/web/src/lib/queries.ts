@@ -4,7 +4,7 @@ import {
   getPublishedSiteProfile,
   type PostWithCategory,
   type SiteProfile,
-} from '@psicoiris/database';
+} from '@psicoiris/database/server';
 import { DEFAULT_SITE_PROFILE } from './default-profile';
 
 export async function fetchSiteProfileSafe(): Promise<SiteProfile> {

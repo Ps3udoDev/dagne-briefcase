@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ArrowRight, FilePlus2, FileText, Inbox, UserRound } from 'lucide-react';
-import { getAllPostsForAdmin, getContactRequests } from '@psicoiris/database';
+import { getAllPostsForAdmin, getContactRequests } from '@psicoiris/database/server';
 import { EditorialCard } from '@psicoiris/ui';
 
 export const dynamic = 'force-dynamic';

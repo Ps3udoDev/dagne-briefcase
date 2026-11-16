@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import {
   updateContactRequestStatus,
   type ContactRequestStatus,
-} from '@psicoiris/database';
+} from '@psicoiris/database/server';
 import { requireAdminUser } from '@/lib/auth';
 
 export interface ContactActionResult {

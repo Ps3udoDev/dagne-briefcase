@@ -41,5 +41,5 @@ Todas estas skills están instaladas a nivel universal en `~/.agents/skills/` (c
 - **Diseño y revisión de documentos (EGM):** `egm-brainstorm`, `egm-draft`, `egm-review`, `egm-review-loop`, `egm-drift-report`
 - **Web moderna, rendimiento y CWV:** `modern-web-guidance` (ejecutar antes de implementar HTML/CSS/DOM/animaciones en cliente)
 - **Diseño Responsive & Mobile-First:** `mobile-first-design`, `responsive-design`
-- **Auditoría y deuda técnica:** `ponytail`, `ponytail-audit`, `ponytail-review`, `ponytail-debt`
+- **Auditoría, seguridad y deuda técnica:** `security-audit`, `ponytail`, `ponytail-audit`, `ponytail-review`, `ponytail-debt`
 - **Descubrimiento de nuevas skills:** `find-skills` (`npx skills find <query>`)

@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { createServerSupabaseClient } from '@psicoiris/database';
+import { createServerSupabaseClient } from '@psicoiris/database/server';
 
 export const DEFAULT_ADMIN_EMAIL = 'dagneraza123@gmail.com';
 

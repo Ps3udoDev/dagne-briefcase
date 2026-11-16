@@ -4,7 +4,7 @@ import {
   getPostCategories,
   type Post,
   type PostInput,
-} from '@psicoiris/database';
+} from '@psicoiris/database/server';
 import { PostEditorForm } from '@/components/PostEditorForm';
 
 export const dynamic = 'force-dynamic';

@@ -5,7 +5,7 @@ import {
   SiteProfileInputSchema,
   updateSiteProfile,
   type SiteProfileInput,
-} from '@psicoiris/database';
+} from '@psicoiris/database/server';
 import { requireAdminUser } from '@/lib/auth';
 import { revalidateWeb } from '@/lib/revalidate';
 

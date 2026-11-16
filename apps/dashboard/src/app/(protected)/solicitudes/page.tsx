@@ -1,4 +1,4 @@
-import { getContactRequests } from '@psicoiris/database';
+import { getContactRequests } from '@psicoiris/database/server';
 import { ContactRequestsList } from '@/components/ContactRequestsList';
 
 export const dynamic = 'force-dynamic';

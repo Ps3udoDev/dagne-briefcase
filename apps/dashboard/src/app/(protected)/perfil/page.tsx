@@ -2,7 +2,7 @@ import {
   createAdminSupabaseClient,
   type SiteProfile,
   type SiteProfileInput,
-} from '@psicoiris/database';
+} from '@psicoiris/database/server';
 import { ProfileEditorForm } from '@/components/ProfileEditorForm';
 
 export const dynamic = 'force-dynamic';

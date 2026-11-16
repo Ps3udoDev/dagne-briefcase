@@ -1,4 +1,4 @@
-import { getAllPostsForAdmin, getPostCategories } from '@psicoiris/database';
+import { getAllPostsForAdmin, getPostCategories } from '@psicoiris/database/server';
 import { PostsTable } from '@/components/PostsTable';
 
 export const dynamic = 'force-dynamic';
