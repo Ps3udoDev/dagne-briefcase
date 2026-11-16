@@ -1,9 +1,12 @@
 export async function revalidateWeb(): Promise<void> {
-  const webUrl = process.env.NEXT_PUBLIC_WEB_URL || 'http://localhost:3000';
+  const webUrl =
+    process.env.WEB_URL ||
+    process.env.NEXT_PUBLIC_WEB_URL ||
+    'http://localhost:3000';
   const secret = process.env.REVALIDATION_SECRET || '';
 
   try {
-    await fetch(`${webUrl}/api/revalidate`, {
+    await fetch(new URL('/api/revalidate', webUrl), {
       method: 'POST',
       headers: {
         'x-revalidation-secret': secret,

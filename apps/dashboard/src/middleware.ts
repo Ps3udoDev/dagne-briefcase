@@ -37,7 +37,8 @@ export async function middleware(request: NextRequest) {
   const isLoginRoute = request.nextUrl.pathname.startsWith('/login');
 
   if (!isAuthorizedAdmin && !isLoginRoute) {
-    const loginUrl = new URL('/login', request.url);
+    const loginUrl = request.nextUrl.clone();
+    loginUrl.pathname = '/login';
     if (user?.email) {
       loginUrl.searchParams.set('error', 'unauthorized');
     }
@@ -45,7 +46,9 @@ export async function middleware(request: NextRequest) {
   }
 
   if (isAuthorizedAdmin && isLoginRoute) {
-    return NextResponse.redirect(new URL('/', request.url));
+    const homeUrl = request.nextUrl.clone();
+    homeUrl.pathname = '/';
+    return NextResponse.redirect(homeUrl);
   }
 
   return response;
