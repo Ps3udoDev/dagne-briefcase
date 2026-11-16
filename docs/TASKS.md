@@ -21,22 +21,22 @@
 ## Próximas Tareas (Siguiente Sesión / Continuación)
 
 ### 1. Conexión a Supabase y Migración Inicial
-- [ ] Recibir del usuario: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` y `SUPABASE_PROJECT_REF`.
-- [ ] Crear `.env.local` (no versionado) y vincular con `npx supabase link --project-ref <ref>`.
-- [ ] Ejecutar migración `20261116000001_initial_schema.sql` y crear el registro inicial de `site_profile` vinculado al usuario `dagneraza123@gmail.com`.
+- [x] Recibir del usuario: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` y `SUPABASE_PROJECT_REF`.
+- [x] Crear `.env.local` (no versionado) y vincular con `SUPABASE_ACCESS_TOKEN` / Supabase Management API.
+- [x] Ejecutar migración `20261116000001_initial_schema.sql` y crear el registro inicial de `site_profile` vinculado al usuario `dagneraza123@gmail.com`.
 
 ### 2. Scaffolding de Aplicaciones (`apps/web` y `apps/dashboard`)
-- [ ] Crear `apps/web` (Next.js App Router + Tailwind con `serenidadEditorialPreset` + Radix UI + `favicon.ico`).
-- [ ] Crear `apps/dashboard` (Next.js App Router + Middleware de Auth Supabase + Login animado *Serenidad Editorial* + layout protegido).
-- [ ] Crear `packages/motion` (wrappers Anime.js + escena ambiental Three.js con `prefers-reduced-motion`).
-- [ ] Ejecutar `pnpm install` y verificar `pnpm typecheck` / `pnpm build`.
+- [x] Crear `apps/web` (Next.js App Router + Tailwind con `serenidadEditorialPreset` + Radix UI + `favicon.ico`).
+- [x] Crear `apps/dashboard` (Next.js App Router + Middleware de Auth Supabase + Login animado *Serenidad Editorial* + layout protegido).
+- [x] Crear `packages/motion` (wrappers Anime.js + escena ambiental Three.js con `prefers-reduced-motion`).
+- [x] Ejecutar `pnpm install` y verificar `pnpm typecheck` / `pnpm build`.
 
 ### 3. Implementación de la Landing (`apps/web`)
-- [ ] Migrar las secciones de `docs/propuesta/code.html` a componentes React Mobile-First (`Hero`, `TrustPillars`, `Services`, `About`, `Process`, `CtaBanner`, `ArticlesPreview`, `ContactForm`, `Footer`).
-- [ ] Conectar `apps/web` a `site_profile` y `posts` publicados (ISR + revalidación on-demand).
-- [ ] Crear página de detalle de artículo `/articulos/[slug]` con renderizado de imágenes y referencias bibliográficas.
+- [x] Migrar las secciones de `docs/propuesta/code.html` a componentes React Mobile-First (`Hero`, `TrustPillars`, `Services`, `About`, `Process`, `CtaBanner`, `ArticlesPreview`, `ContactForm`, `Footer`).
+- [x] Conectar `apps/web` a `site_profile` y `posts` publicados (ISR + revalidación on-demand).
+- [x] Crear página de detalle de artículo `/articulos/[slug]` con renderizado de imágenes y referencias bibliográficas.
 
 ### 4. Dashboard Inicial (`apps/dashboard`)
-- [ ] Implementar Login animado exclusivo para `dagneraza123@gmail.com` y middleware de protección.
-- [ ] Editor de Portafolio (`site_profile`): editar textos, enfoque, servicios y contacto con revalidación automática en `apps/web`.
-- [ ] Gestor de Publicaciones (`posts`): tabla con `@tanstack/react-table`, formulario con subida de portada/imágenes a `psicoiris-media` y lista dinámica de referencias bibliográficas.
+- [x] Implementar Login animado exclusivo para `dagneraza123@gmail.com` y middleware de protección.
+- [x] Editor de Portafolio (`site_profile`): editar textos, enfoque, servicios y contacto con revalidación automática en `apps/web`.
+- [x] Gestor de Publicaciones (`posts`): tabla con `@tanstack/react-table`, formulario con subida de portada/imágenes a `psicoiris-media` y lista dinámica de referencias bibliográficas.

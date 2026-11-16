@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json.schema.org/draft-07/schema#",
+  "extends": "@psicoiris/config/tsconfig/base",
+  "compilerOptions": {
+    "lib": ["ES2022", "dom"],
+    "noEmit": true
+  },
+  "include": ["src/**/*.ts"]
+}

@@ -1,0 +1,152 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+.menu-trigger {
+  anchor-name: --menu-button;
+}
+
+.mobile-nav-popover {
+  position: fixed;
+  inset: auto;
+  inset-block-start: 4.75rem;
+  inset-block-start: anchor(--menu-button bottom);
+  inset-inline-end: 1.25rem;
+  inline-size: min(85dvw, 22rem);
+  max-inline-size: calc(100dvw - 2.5rem);
+  max-block-size: calc(100dvh - 6rem);
+  margin-block-start: 0.5rem;
+  overflow-y: auto;
+}
+
+.mobile-nav-popover:not(:is(:popover-open, .\:popover-open)) {
+  display: none;
+}
+
+.mobile-nav-popover:is(:popover-open, .\:popover-open) {
+  display: block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mobile-nav-popover {
+    opacity: 0;
+    translate: 0 -0.5rem;
+    transition:
+      opacity 0.2s ease,
+      translate 0.2s ease,
+      display 0.2s,
+      overlay 0.2s;
+    transition-behavior: allow-discrete;
+  }
+
+  .mobile-nav-popover:is(:popover-open, .\:popover-open) {
+    opacity: 1;
+    translate: 0 0;
+
+    @starting-style {
+      opacity: 0;
+      translate: 0 -0.5rem;
+    }
+  }
+}
+
+.visually-hidden:where(:not(:focus-within, :active)) {
+  position: absolute !important;
+  clip-path: inset(50%) !important;
+  overflow: hidden !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  white-space: nowrap !important;
+}
+
+.editorial-prose h2 {
+  @apply mt-10 mb-4 font-serif text-2xl font-normal leading-snug text-plum-ink md:text-3xl;
+}
+
+.editorial-prose h3 {
+  @apply mt-8 mb-3 font-serif text-xl font-medium leading-snug text-plum-ink md:text-2xl;
+}
+
+.editorial-prose p {
+  @apply mb-5 text-base leading-[1.75] text-on-surface-variant md:text-lg;
+}
+
+.editorial-prose ul,
+.editorial-prose ol {
+  @apply mb-6 ml-5 space-y-2 text-base leading-[1.7] text-on-surface-variant md:text-lg;
+}
+
+.editorial-prose ul {
+  @apply list-disc;
+}
+
+.editorial-prose ol {
+  @apply list-decimal;
+}
+
+.editorial-prose blockquote {
+  @apply my-8 rounded-2xl bg-rose-dust px-6 py-5 font-serif text-lg italic leading-relaxed text-plum-ink;
+}
+
+.editorial-prose a {
+  @apply font-medium text-primary underline decoration-mauve-border underline-offset-4 transition-colors hover:text-primary-accent hover:decoration-primary;
+}
+
+.editorial-prose strong {
+  @apply font-semibold text-on-surface;
+}
+
+.scroll-progress-bar {
+  transform: scaleX(0);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    .scroll-progress-bar {
+      animation: psicoiris-scroll-progress linear both;
+      animation-timeline: scroll(root block);
+    }
+
+    @keyframes psicoiris-scroll-progress {
+      from {
+        transform: scaleX(0);
+      }
+      to {
+        transform: scaleX(1);
+      }
+    }
+  }
+
+  @supports (animation-timeline: view()) {
+    .scroll-drift {
+      animation: psicoiris-scroll-drift linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+
+    @keyframes psicoiris-scroll-drift {
+      from {
+        transform: translateY(14px);
+      }
+      to {
+        transform: translateY(-14px);
+      }
+    }
+  }
+}
