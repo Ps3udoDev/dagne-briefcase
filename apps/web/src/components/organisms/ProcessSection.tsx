@@ -1,6 +1,6 @@
 import { Compass, MessageCircle, TrendingUp } from 'lucide-react';
 import type { ProcessStep } from '@psicoiris/database';
-import { Reveal } from '@psicoiris/motion';
+import { Reveal, StaggerGroup } from '@psicoiris/motion';
 
 const STEP_ICONS = [MessageCircle, Compass, TrendingUp] as const;
 
@@ -25,31 +25,33 @@ export function ProcessSection({ steps }: ProcessSectionProps) {
           </p>
         </Reveal>
 
-        <div className="grid grid-cols-1 gap-gutter md:grid-cols-3 lg:gap-gutter-desktop">
+        <StaggerGroup className="grid grid-cols-1 gap-gutter md:grid-cols-3 lg:gap-gutter-desktop">
           {steps.map((item, idx) => {
             const Icon = STEP_ICONS[idx % STEP_ICONS.length]!;
             return (
-              <Reveal key={item.step} delay={idx * 80}>
-                <div className="flex h-full flex-col gap-space-sm rounded-2xl bg-surface-container-low p-space-lg">
-                  <div className="flex items-center justify-between">
-                    <span className="font-serif text-4xl font-normal text-primary/40">
-                      {item.step}
-                    </span>
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-surface-container-high text-primary">
-                      <Icon aria-hidden="true" className="h-4 w-4" />
-                    </span>
-                  </div>
-                  <h3 className="font-serif text-xl font-medium text-plum-ink md:text-2xl">
-                    {item.title}
-                  </h3>
-                  <p className="text-base leading-relaxed text-on-surface-variant">
-                    {item.description}
-                  </p>
+              <div
+                key={item.step}
+                data-stagger
+                className="flex h-full flex-col gap-space-sm rounded-2xl bg-surface-container-low p-space-lg"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-serif text-4xl font-normal text-primary/40">
+                    {item.step}
+                  </span>
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-surface-container-high text-primary">
+                    <Icon aria-hidden="true" className="h-4 w-4" />
+                  </span>
                 </div>
-              </Reveal>
+                <h3 className="font-serif text-xl font-medium text-plum-ink md:text-2xl">
+                  {item.title}
+                </h3>
+                <p className="text-base leading-relaxed text-on-surface-variant">
+                  {item.description}
+                </p>
+              </div>
             );
           })}
-        </div>
+        </StaggerGroup>
       </div>
     </section>
   );

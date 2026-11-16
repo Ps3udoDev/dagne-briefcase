@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Quote } from 'lucide-react';
 import type { SiteProfile } from '@psicoiris/database';
-import { Reveal } from '@psicoiris/motion';
+import { Reveal, ScrollDrift } from '@psicoiris/motion';
 import { BrandMark } from '@psicoiris/ui';
 
 export interface AboutSectionProps {
@@ -43,7 +43,8 @@ export function AboutSection({ profile }: AboutSectionProps) {
           </Reveal>
 
           <Reveal delay={120} className="flex flex-col gap-space-md lg:col-span-5">
-            <div className="relative overflow-hidden rounded-3xl shadow-calmed">
+            <ScrollDrift>
+              <div className="relative overflow-hidden rounded-3xl shadow-calmed">
               {profile.about_image_url ? (
                 <Image
                   src={profile.about_image_url}
@@ -60,7 +61,8 @@ export function AboutSection({ profile }: AboutSectionProps) {
                   </p>
                 </div>
               )}
-            </div>
+              </div>
+            </ScrollDrift>
 
             <blockquote className="rounded-2xl bg-rose-dust p-space-md">
               <div className="flex items-start gap-3">

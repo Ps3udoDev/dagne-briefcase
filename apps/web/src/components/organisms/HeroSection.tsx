@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowDown, Calendar, Lock, ShieldCheck, Sparkles } from 'lucide-react';
 import type { SiteProfile } from '@psicoiris/database';
-import { Reveal } from '@psicoiris/motion';
+import { Reveal, ScrollDrift } from '@psicoiris/motion';
 import { Badge, BrandMark } from '@psicoiris/ui';
 import { HeroAmbient } from './HeroAmbient';
 
@@ -72,7 +72,8 @@ export function HeroSection({ profile }: HeroSectionProps) {
           </Reveal>
 
           <Reveal delay={120} className="relative mt-space-md lg:col-span-5 lg:mt-0">
-            <div className="relative rounded-3xl bg-surface-container-low p-3 shadow-calmed">
+            <ScrollDrift>
+              <div className="relative rounded-3xl bg-surface-container-low p-3 shadow-calmed">
               <div className="relative overflow-hidden rounded-2xl">
                 {profile.hero_image_url ? (
                   <Image
@@ -109,6 +110,7 @@ export function HeroSection({ profile }: HeroSectionProps) {
                 <span>Espacio sereno &amp; seguro</span>
               </div>
             </div>
+            </ScrollDrift>
           </Reveal>
         </div>
       </div>

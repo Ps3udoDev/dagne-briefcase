@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import type { ServiceItem } from '@psicoiris/database';
-import { Reveal } from '@psicoiris/motion';
+import { Reveal, StaggerGroup } from '@psicoiris/motion';
 import { Badge, EditorialCard } from '@psicoiris/ui';
 
 export interface ServicesSectionProps {
@@ -25,9 +25,9 @@ export function ServicesSection({ services }: ServicesSectionProps) {
           </p>
         </Reveal>
 
-        <div className="grid grid-cols-1 gap-gutter md:grid-cols-2 lg:gap-gutter-desktop">
-          {services.map((service, index) => (
-            <Reveal key={service.title} delay={index * 70}>
+        <StaggerGroup className="grid grid-cols-1 gap-gutter md:grid-cols-2 lg:gap-gutter-desktop">
+          {services.map((service) => (
+            <div key={service.title} data-stagger>
               <EditorialCard
                 className="h-full transition-colors duration-200 hover:border-primary/50"
                 eyebrow={
@@ -47,9 +47,9 @@ export function ServicesSection({ services }: ServicesSectionProps) {
                   </Link>
                 }
               />
-            </Reveal>
+            </div>
           ))}
-        </div>
+        </StaggerGroup>
 
         <p className="mt-space-lg text-center text-sm italic text-on-surface-variant">
           * Práctica basada en la evidencia clínica: sin diagnósticos reduccionistas ni

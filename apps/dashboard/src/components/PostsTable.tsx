@@ -1,7 +1,6 @@
 'use client';
 
-import { useMemo, useState, useTransition } from 'react';
-import Link from 'next/link';
+import { useEffect, useMemo, useState, useTransition } from 'react';
 import {
   createColumnHelper,
   flexRender,
@@ -11,13 +10,64 @@ import {
   useReactTable,
   type SortingState,
 } from '@tanstack/react-table';
-import { ArrowUpDown, Pencil, Search, Trash2 } from 'lucide-react';
-import type { PostWithCategory } from '@psicoiris/database';
-import { Badge, Button, Input, type BadgeVariant } from '@psicoiris/ui';
+import { ArrowUpDown, FilePlus2, Pencil, Search, Trash2 } from 'lucide-react';
+import type {
+  PostCategory,
+  PostInput,
+  PostWithCategory,
+} from '@psicoiris/database';
+import {
+  Badge,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  Input,
+  type BadgeVariant,
+} from '@psicoiris/ui';
 import { deletePostAction } from '@/app/(protected)/posts/actions';
+import { PostEditorForm } from '@/components/PostEditorForm';
 
 export interface PostsTableProps {
   initialPosts: PostWithCategory[];
+  categories: PostCategory[];
+  initialOpenCreate?: boolean;
+}
+
+const EMPTY_POST_INPUT: PostInput = {
+  title: '',
+  slug: '',
+  excerpt: '',
+  content_md: '',
+  category_id: null,
+  cover_image_url: '',
+  cover_image_alt: '',
+  reading_time_minutes: 4,
+  tags: [],
+  references_list: [],
+  status: 'draft',
+  seo_title: '',
+  seo_description: '',
+};
+
+function toPostInput(post: PostWithCategory): PostInput {
+  return {
+    title: post.title,
+    slug: post.slug,
+    excerpt: post.excerpt,
+    content_md: post.content_md,
+    category_id: post.category_id,
+    cover_image_url: post.cover_image_url ?? '',
+    cover_image_alt: post.cover_image_alt ?? '',
+    reading_time_minutes: post.reading_time_minutes,
+    tags: post.tags ?? [],
+    references_list: post.references_list ?? [],
+    status: post.status,
+    seo_title: post.seo_title ?? '',
+    seo_description: post.seo_description ?? '',
+  };
 }
 
 const STATUS_META: Record<
@@ -39,14 +89,34 @@ function formatDate(iso: string): string {
   }).format(new Date(iso));
 }
 
-export function PostsTable({ initialPosts }: PostsTableProps) {
+export function PostsTable({
+  initialPosts,
+  categories,
+  initialOpenCreate = false,
+}: PostsTableProps) {
   const [posts, setPosts] = useState<PostWithCategory[]>(initialPosts);
   const [globalFilter, setGlobalFilter] = useState('');
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'updated_at', desc: true },
   ]);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(initialOpenCreate);
+  const [editingPost, setEditingPost] = useState<PostWithCategory | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    setPosts(initialPosts);
+  }, [initialPosts]);
+
+  function openCreateModal() {
+    setEditingPost(null);
+    setModalOpen(true);
+  }
+
+  function openEditModal(post: PostWithCategory) {
+    setEditingPost(post);
+    setModalOpen(true);
+  }
 
   function handleDelete(post: PostWithCategory) {
     if (!window.confirm(`¿Eliminar "${post.title}"? Esta acción es permanente.`)) {
@@ -72,12 +142,13 @@ export function PostsTable({ initialPosts }: PostsTableProps) {
           const row = info.row.original;
           return (
             <div className="min-w-[200px] space-y-1">
-              <Link
-                href={`/posts/${row.id}`}
-                className="font-medium text-plum-ink hover:text-primary"
+              <button
+                type="button"
+                onClick={() => openEditModal(row)}
+                className="text-left font-medium text-plum-ink hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 {row.title}
-              </Link>
+              </button>
               <p className="text-xs text-on-surface-variant">
                 {row.post_categories?.name ?? 'Sin categoría'} ·{' '}
                 {row.reading_time_minutes} min
@@ -108,13 +179,15 @@ export function PostsTable({ initialPosts }: PostsTableProps) {
           const row = info.row.original;
           return (
             <div className="flex items-center justify-end gap-2">
-              <Link
-                href={`/posts/${row.id}`}
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => openEditModal(row)}
                 aria-label={`Editar ${row.title}`}
-                className="inline-flex min-h-[48px] min-w-[48px] items-center justify-center rounded-xl text-plum-ink transition-colors hover:bg-surface-container-low focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                className="min-w-[48px] px-3 text-plum-ink"
               >
                 <Pencil className="h-4 w-4" aria-hidden="true" />
-              </Link>
+              </Button>
               <Button
                 type="button"
                 variant="ghost"
@@ -151,20 +224,55 @@ export function PostsTable({ initialPosts }: PostsTableProps) {
 
   return (
     <div className="space-y-4">
-      <div className="relative max-w-md">
-        <Search
-          aria-hidden="true"
-          className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-on-surface-variant"
-        />
-        <Input
-          type="search"
-          aria-label="Buscar publicaciones"
-          placeholder="Buscar por título o categoría..."
-          value={globalFilter}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          className="pl-10"
-        />
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative w-full max-w-md">
+          <Search
+            aria-hidden="true"
+            className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-on-surface-variant"
+          />
+          <Input
+            type="search"
+            aria-label="Buscar publicaciones"
+            placeholder="Buscar por título o categoría..."
+            value={globalFilter}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+
+        <Button
+          type="button"
+          onClick={openCreateModal}
+          className="w-full sm:w-auto"
+        >
+          <FilePlus2 className="h-4 w-4" aria-hidden="true" />
+          Nueva publicación
+        </Button>
       </div>
+
+      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {editingPost ? 'Editar publicación' : 'Nueva publicación'}
+            </DialogTitle>
+            <DialogDescription>
+              {editingPost
+                ? 'Actualiza el contenido, portada o referencias y guarda para reflejarlo en la landing.'
+                : 'Redacta un nuevo artículo psicoeducativo y súbelo como borrador o publicado.'}
+            </DialogDescription>
+          </DialogHeader>
+          <PostEditorForm
+            key={editingPost?.id ?? 'new-post'}
+            postId={editingPost?.id}
+            initialData={editingPost ? toPostInput(editingPost) : EMPTY_POST_INPUT}
+            categories={categories}
+            embedded
+            onSuccess={() => setModalOpen(false)}
+            onCancel={() => setModalOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
 
       {feedback && (
         <div
@@ -193,12 +301,13 @@ export function PostsTable({ initialPosts }: PostsTableProps) {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 space-y-1">
-                      <Link
-                        href={`/posts/${post.id}`}
-                        className="block font-serif text-lg text-plum-ink hover:text-primary"
+                      <button
+                        type="button"
+                        onClick={() => openEditModal(post)}
+                        className="block text-left font-serif text-lg text-plum-ink hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                       >
                         {post.title}
-                      </Link>
+                      </button>
                       <p className="text-xs text-on-surface-variant">
                         {post.post_categories?.name ?? 'Sin categoría'} ·{' '}
                         {formatDate(post.updated_at)}
@@ -208,13 +317,14 @@ export function PostsTable({ initialPosts }: PostsTableProps) {
                   </div>
 
                   <div className="flex items-center justify-end gap-2 border-t border-mauve-border/40 pt-3">
-                    <Link
-                      href={`/posts/${post.id}`}
-                      className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-mauve-border bg-lavender-soft/50 px-4 text-sm font-medium text-plum-ink"
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => openEditModal(post)}
                     >
                       <Pencil className="h-4 w-4" aria-hidden="true" />
                       Editar
-                    </Link>
+                    </Button>
                     <Button
                       type="button"
                       variant="ghost"

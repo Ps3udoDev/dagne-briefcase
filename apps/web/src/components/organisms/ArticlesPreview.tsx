@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { ArrowRight, BookOpen, Clock } from 'lucide-react';
 import type { PostWithCategory } from '@psicoiris/database';
-import { Reveal } from '@psicoiris/motion';
+import { Reveal, StaggerGroup } from '@psicoiris/motion';
 import { Badge } from '@psicoiris/ui';
 
 export interface ArticlesPreviewProps {
@@ -37,46 +37,48 @@ export function ArticlesPreview({ posts }: ArticlesPreviewProps) {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-gutter md:grid-cols-3 lg:gap-gutter-desktop">
-            {posts.map((post, idx) => (
-              <Reveal key={post.id} delay={idx * 80}>
-                <article className="flex h-full flex-col justify-between rounded-2xl bg-surface-container-low p-space-md transition-shadow duration-300 hover:shadow-calmed">
-                  <div>
-                    <div className="mb-space-sm flex items-center justify-between gap-2">
-                      <Badge variant="lavender">
-                        {post.post_categories?.name ?? 'Psicoeducación'}
-                      </Badge>
-                      <span className="inline-flex items-center gap-1 text-xs font-medium text-on-surface-variant">
-                        <Clock aria-hidden="true" className="h-3.5 w-3.5" />
-                        <span>{post.reading_time_minutes} min</span>
-                      </span>
-                    </div>
-
-                    <h3 className="mb-space-xs font-serif text-xl font-normal leading-snug text-plum-ink md:text-2xl">
-                      <Link
-                        href={`/articulos/${post.slug}`}
-                        className="transition-colors hover:text-primary focus-visible:outline-none focus-visible:underline"
-                      >
-                        {post.title}
-                      </Link>
-                    </h3>
-
-                    <p className="mb-space-md text-sm leading-relaxed text-on-surface-variant">
-                      {post.excerpt}
-                    </p>
+          <StaggerGroup className="grid grid-cols-1 gap-gutter md:grid-cols-3 lg:gap-gutter-desktop">
+            {posts.map((post) => (
+              <article
+                key={post.id}
+                data-stagger
+                className="flex h-full flex-col justify-between rounded-2xl bg-surface-container-low p-space-md transition-shadow duration-300 hover:shadow-calmed"
+              >
+                <div>
+                  <div className="mb-space-sm flex items-center justify-between gap-2">
+                    <Badge variant="lavender">
+                      {post.post_categories?.name ?? 'Psicoeducación'}
+                    </Badge>
+                    <span className="inline-flex items-center gap-1 text-xs font-medium text-on-surface-variant">
+                      <Clock aria-hidden="true" className="h-3.5 w-3.5" />
+                      <span>{post.reading_time_minutes} min</span>
+                    </span>
                   </div>
 
-                  <Link
-                    href={`/articulos/${post.slug}`}
-                    className="inline-flex min-h-[48px] items-center gap-1.5 text-sm font-semibold text-primary transition-colors hover:text-primary-accent"
-                  >
-                    <span>Leer artículo</span>
-                    <ArrowRight aria-hidden="true" className="h-4 w-4" />
-                  </Link>
-                </article>
-              </Reveal>
+                  <h3 className="mb-space-xs font-serif text-xl font-normal leading-snug text-plum-ink md:text-2xl">
+                    <Link
+                      href={`/articulos/${post.slug}`}
+                      className="transition-colors hover:text-primary focus-visible:outline-none focus-visible:underline"
+                    >
+                      {post.title}
+                    </Link>
+                  </h3>
+
+                  <p className="mb-space-md text-sm leading-relaxed text-on-surface-variant">
+                    {post.excerpt}
+                  </p>
+                </div>
+
+                <Link
+                  href={`/articulos/${post.slug}`}
+                  className="inline-flex min-h-[48px] items-center gap-1.5 text-sm font-semibold text-primary transition-colors hover:text-primary-accent"
+                >
+                  <span>Leer artículo</span>
+                  <ArrowRight aria-hidden="true" className="h-4 w-4" />
+                </Link>
+              </article>
             ))}
-          </div>
+          </StaggerGroup>
         )}
 
         <div className="mt-space-lg text-center">

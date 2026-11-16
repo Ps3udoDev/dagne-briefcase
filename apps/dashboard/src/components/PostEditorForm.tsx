@@ -17,6 +17,9 @@ export interface PostEditorFormProps {
   postId?: string;
   initialData: PostInput;
   categories: PostCategory[];
+  embedded?: boolean;
+  onSuccess?: () => void;
+  onCancel?: () => void;
 }
 
 function toSlug(value: string): string {
@@ -33,6 +36,9 @@ export function PostEditorForm({
   postId,
   initialData,
   categories,
+  embedded = false,
+  onSuccess,
+  onCancel,
 }: PostEditorFormProps) {
   const router = useRouter();
   const [form, setForm] = useState<PostInput>(initialData);
@@ -126,24 +132,33 @@ export function PostEditorForm({
       });
       setStatus(result);
 
-      if (result.ok && !postId && result.id) {
-        router.push(`/posts/${result.id}`);
-        router.refresh();
+      if (result.ok) {
+        if (onSuccess) {
+          router.refresh();
+          onSuccess();
+          return;
+        }
+        if (!postId && result.id) {
+          router.push(`/posts/${result.id}`);
+          router.refresh();
+        }
       }
     });
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
-      <div className="flex items-center justify-between gap-4">
-        <Link
-          href="/posts"
-          className="inline-flex min-h-[48px] items-center gap-2 text-sm font-medium text-primary hover:text-primary-accent"
-        >
-          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-          Volver a publicaciones
-        </Link>
-      </div>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {!embedded && (
+        <div className="flex items-center justify-between gap-4">
+          <Link
+            href="/posts"
+            className="inline-flex min-h-[48px] items-center gap-2 text-sm font-medium text-primary hover:text-primary-accent"
+          >
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            Volver a publicaciones
+          </Link>
+        </div>
+      )}
 
       {status && (
         <div
@@ -454,8 +469,19 @@ export function PostEditorForm({
         </div>
       </section>
 
-      <div className="flex justify-end">
-        <Button type="submit" disabled={isPending} className="w-full md:w-auto">
+      <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+        {onCancel && (
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={onCancel}
+            disabled={isPending}
+            className="w-full sm:w-auto"
+          >
+            Cancelar
+          </Button>
+        )}
+        <Button type="submit" disabled={isPending} className="w-full sm:w-auto">
           <Save className="h-4 w-4" aria-hidden="true" />
           {isPending ? 'Guardando...' : 'Guardar publicación'}
         </Button>

@@ -1,3 +1,4 @@
+import { ScrollProgressBar } from '@psicoiris/motion';
 import { AboutSection } from '@/components/organisms/AboutSection';
 import { ArticlesPreview } from '@/components/organisms/ArticlesPreview';
 import { ContactForm } from '@/components/organisms/ContactForm';
@@ -20,6 +21,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <ScrollProgressBar />
       <Navbar
         brandName={profile.brand_name}
         clinicianTitle={profile.clinician_title}

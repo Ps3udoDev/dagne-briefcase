@@ -12,5 +12,16 @@ export {
   EditorialCard,
   type EditorialCardProps,
 } from './components/molecules/EditorialCard';
+export {
+  Dialog,
+  DialogPortal,
+  DialogOverlay,
+  DialogClose,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from './components/molecules/Dialog';
 
 export { BrandMark, type BrandMarkProps } from './components/organisms/BrandMark';

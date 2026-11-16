@@ -63,7 +63,7 @@ export default async function DashboardOverviewPage() {
           description="Artículos en preparación pendientes de publicación."
           footer={
             <Link
-              href="/posts/nuevo"
+              href="/posts?nuevo=1"
               className="inline-flex min-h-[48px] items-center gap-2 text-sm font-medium text-primary hover:text-primary-accent"
             >
               Redactar nuevo artículo
@@ -108,7 +108,7 @@ export default async function DashboardOverviewPage() {
           </Link>
 
           <Link
-            href="/posts/nuevo"
+            href="/posts?nuevo=1"
             className="flex min-h-[48px] items-center gap-3 rounded-2xl border border-mauve-border/60 bg-surface-container-lowest p-5 shadow-calmed transition-colors hover:bg-surface-container-low"
           >
             <FilePlus2 className="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
