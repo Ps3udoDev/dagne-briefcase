@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 112" fill="none" role="img" aria-label="Psicoiris — Psicología Clínica">
+  <defs>
+    <linearGradient id="logoBg" x1="8" y1="8" x2="96" y2="96" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="55%" stop-color="#F4E6E5"/>
+      <stop offset="100%" stop-color="#E8D3EC"/>
+    </linearGradient>
+    <linearGradient id="logoArch" x1="30" y1="24" x2="74" y2="78" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#9F73AB"/>
+      <stop offset="100%" stop-color="#D4B2D8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Isotipo -->
+  <rect x="8" y="10" width="92" height="92" rx="26" fill="url(#logoBg)" stroke="#D4B2D8" stroke-width="2.5"/>
+  <circle cx="54" cy="56" r="28" fill="#FFFFFF" fill-opacity="0.75" stroke="#E8D3EC" stroke-width="1.5"/>
+  <path d="M32 69C32 48 42 35 54 35C66 35 76 48 76 69" stroke="#D4B2D8" stroke-width="4" stroke-linecap="round"/>
+  <path d="M40 71C40 54 46 43 54 43C62 43 68 54 68 71" stroke="url(#logoArch)" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="54" cy="58" r="7.5" fill="#9F73AB"/>
+  <circle cx="54" cy="58" r="3" fill="#FFFFFF"/>
+  <path d="M36 75H72" stroke="#9F73AB" stroke-width="2.8" stroke-linecap="round" stroke-opacity="0.65"/>
+
+  <!-- Wordmark Editorial -->
+  <text x="118" y="57" font-family="Newsreader, Georgia, serif" font-size="38" font-weight="500" letter-spacing="-0.02em" fill="#2D2531">Psicoiris</text>
+  <text x="120" y="79" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="11.5" font-weight="600" letter-spacing="0.18em" fill="#9F73AB">PSICOLOGÍA CLÍNICA</text>
+</svg>

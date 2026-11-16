@@ -1,0 +1,12 @@
+{
+  "name": "@psicoiris/ui",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./tailwind-preset": "./tailwind.preset.ts"
+  },
+  "devDependencies": {
+    "@psicoiris/config": "workspace:*",
+    "typescript": "^5.8.0"
+  }
+}
