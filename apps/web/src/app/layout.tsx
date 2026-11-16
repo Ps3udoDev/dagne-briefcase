@@ -31,6 +31,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="es"
+      suppressHydrationWarning
       className={`${newsreader.variable} ${jakarta.variable} scroll-smooth`}
     >
       <body className="min-h-dvh bg-surface font-sans text-on-surface antialiased selection:bg-secondary-container selection:text-on-secondary-container overflow-x-clip">

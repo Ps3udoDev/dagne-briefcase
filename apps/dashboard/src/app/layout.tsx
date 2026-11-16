@@ -26,7 +26,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="es" className={`${newsreader.variable} ${jakarta.variable}`}>
+    <html
+      lang="es"
+      suppressHydrationWarning
+      className={`${newsreader.variable} ${jakarta.variable}`}
+    >
       <body className="min-h-screen bg-surface text-on-surface font-sans antialiased">
         {children}
       </body>
