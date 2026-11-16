@@ -1,6 +1,14 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
+  "globalPassThroughEnv": [
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "CLINICIAN_ADMIN_EMAIL",
+    "REVALIDATION_SECRET",
+    "WEB_URL"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
