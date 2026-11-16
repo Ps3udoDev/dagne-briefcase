@@ -1,8 +1,11 @@
 'use client';
 
-import { useState, useTransition, type FormEvent } from 'react';
-import { Plus, Save, Trash2 } from 'lucide-react';
-import type { SiteProfileInput } from '@psicoiris/database';
+import { useState, useTransition, type ChangeEvent, type FormEvent } from 'react';
+import { Plus, Save, Trash2, Upload } from 'lucide-react';
+import {
+  createBrowserSupabaseClient,
+  type SiteProfileInput,
+} from '@psicoiris/database';
 import { Button, FormField, Input, Textarea } from '@psicoiris/ui';
 import { saveProfileAction } from '@/app/(protected)/perfil/actions';
 
@@ -15,6 +18,9 @@ export function ProfileEditorForm({ initialData }: ProfileEditorFormProps) {
   const [status, setStatus] = useState<{ ok: boolean; message: string } | null>(
     null
   );
+  const [uploadingField, setUploadingField] = useState<
+    'hero_image_url' | 'about_image_url' | null
+  >(null);
   const [isPending, startTransition] = useTransition();
 
   function updateField<K extends keyof SiteProfileInput>(
@@ -22,6 +28,53 @@ export function ProfileEditorForm({ initialData }: ProfileEditorFormProps) {
     value: SiteProfileInput[K]
   ) {
     setForm((prev) => ({ ...prev, [key]: value }));
+  }
+
+  async function handleProfileImageUpload(
+    field: 'hero_image_url' | 'about_image_url',
+    event: ChangeEvent<HTMLInputElement>
+  ) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploadingField(field);
+    setStatus(null);
+    try {
+      const supabase = createBrowserSupabaseClient();
+      const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+      const prefix = field === 'hero_image_url' ? 'hero' : 'about';
+      const path = `profile/${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('psicoiris-media')
+        .upload(path, file, { upsert: true });
+
+      if (uploadError) {
+        setStatus({
+          ok: false,
+          message: `Error al subir la imagen: ${uploadError.message}`,
+        });
+        return;
+      }
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from('psicoiris-media').getPublicUrl(path);
+
+      updateField(field, publicUrl);
+      setStatus({
+        ok: true,
+        message: 'Imagen subida a psicoiris-media/profile. Guarda los cambios para publicarla.',
+      });
+    } catch {
+      setStatus({
+        ok: false,
+        message: 'No se pudo subir la imagen al bucket psicoiris-media.',
+      });
+    } finally {
+      setUploadingField(null);
+      event.target.value = '';
+    }
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -159,15 +212,51 @@ export function ProfileEditorForm({ initialData }: ProfileEditorFormProps) {
           />
         </FormField>
 
-        <FormField label="URL de imagen de portada" htmlFor="hero_image_url">
-          <Input
-            id="hero_image_url"
-            type="url"
-            placeholder="https://..."
-            value={form.hero_image_url ?? ''}
-            onChange={(e) => updateField('hero_image_url', e.target.value)}
-          />
-        </FormField>
+        <div className="space-y-3">
+          <FormField
+            label="Foto de portada (Hero)"
+            htmlFor="hero_image_file"
+            hint="Se sube a psicoiris-media/profile"
+          >
+            <div className="flex flex-wrap items-center gap-3">
+              <label
+                htmlFor="hero_image_file"
+                className="inline-flex min-h-[48px] cursor-pointer items-center gap-2 rounded-full border border-mauve-border bg-surface-container-low px-5 py-2.5 text-sm font-medium text-plum-ink transition-colors hover:bg-lavender-soft/60 focus-within:ring-2 focus-within:ring-primary"
+              >
+                <Upload className="h-4 w-4 text-primary" aria-hidden="true" />
+                {uploadingField === 'hero_image_url'
+                  ? 'Subiendo foto...'
+                  : form.hero_image_url
+                    ? 'Cambiar foto de portada'
+                    : 'Subir foto de portada'}
+                <input
+                  id="hero_image_file"
+                  type="file"
+                  accept="image/*"
+                  disabled={uploadingField !== null}
+                  onChange={(e) => handleProfileImageUpload('hero_image_url', e)}
+                  className="sr-only"
+                />
+              </label>
+              {form.hero_image_url && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => updateField('hero_image_url', '')}
+                >
+                  Quitar foto
+                </Button>
+              )}
+            </div>
+          </FormField>
+          {form.hero_image_url && (
+            <img
+              src={form.hero_image_url}
+              alt="Vista previa de portada"
+              className="h-40 w-full max-w-xs rounded-2xl border border-mauve-border/60 object-cover"
+            />
+          )}
+        </div>
       </section>
 
       {/* 3. Sobre mí */}
@@ -243,15 +332,51 @@ export function ProfileEditorForm({ initialData }: ProfileEditorFormProps) {
           />
         </FormField>
 
-        <FormField label="URL de retrato profesional" htmlFor="about_image_url">
-          <Input
-            id="about_image_url"
-            type="url"
-            placeholder="https://..."
-            value={form.about_image_url ?? ''}
-            onChange={(e) => updateField('about_image_url', e.target.value)}
-          />
-        </FormField>
+        <div className="space-y-3">
+          <FormField
+            label="Retrato profesional (Sobre mí)"
+            htmlFor="about_image_file"
+            hint="Se sube a psicoiris-media/profile"
+          >
+            <div className="flex flex-wrap items-center gap-3">
+              <label
+                htmlFor="about_image_file"
+                className="inline-flex min-h-[48px] cursor-pointer items-center gap-2 rounded-full border border-mauve-border bg-surface-container-low px-5 py-2.5 text-sm font-medium text-plum-ink transition-colors hover:bg-lavender-soft/60 focus-within:ring-2 focus-within:ring-primary"
+              >
+                <Upload className="h-4 w-4 text-primary" aria-hidden="true" />
+                {uploadingField === 'about_image_url'
+                  ? 'Subiendo retrato...'
+                  : form.about_image_url
+                    ? 'Cambiar retrato'
+                    : 'Subir retrato'}
+                <input
+                  id="about_image_file"
+                  type="file"
+                  accept="image/*"
+                  disabled={uploadingField !== null}
+                  onChange={(e) => handleProfileImageUpload('about_image_url', e)}
+                  className="sr-only"
+                />
+              </label>
+              {form.about_image_url && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => updateField('about_image_url', '')}
+                >
+                  Quitar retrato
+                </Button>
+              )}
+            </div>
+          </FormField>
+          {form.about_image_url && (
+            <img
+              src={form.about_image_url}
+              alt="Vista previa de retrato profesional"
+              className="h-40 w-full max-w-xs rounded-2xl border border-mauve-border/60 object-cover"
+            />
+          )}
+        </div>
       </section>
 
       {/* 4. Servicios */}

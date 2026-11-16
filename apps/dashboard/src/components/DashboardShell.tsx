@@ -85,7 +85,7 @@ export function DashboardShell({ userEmail, children }: DashboardShellProps) {
   );
 
   return (
-    <div className="flex min-h-screen flex-col bg-surface lg:flex-row">
+    <div className="flex min-h-dvh flex-col bg-surface lg:h-dvh lg:flex-row lg:overflow-hidden">
       {/* Mobile / Tablet Topbar */}
       <header className="sticky top-0 z-30 flex items-center justify-between border-b border-mauve-border/60 bg-surface-container-lowest/95 px-5 py-3 backdrop-blur-sm lg:hidden">
         <Link
@@ -136,7 +136,7 @@ export function DashboardShell({ userEmail, children }: DashboardShellProps) {
       )}
 
       {/* Desktop Sidebar */}
-      <aside className="hidden w-64 shrink-0 flex-col justify-between border-r border-mauve-border/60 bg-surface-container-lowest px-5 py-6 lg:flex">
+      <aside className="hidden w-64 shrink-0 flex-col justify-between border-r border-mauve-border/60 bg-surface-container-lowest px-5 py-6 lg:flex lg:h-dvh lg:overflow-y-auto">
         <div className="space-y-8">
           <Link
             href="/"
@@ -164,7 +164,7 @@ export function DashboardShell({ userEmail, children }: DashboardShellProps) {
       </aside>
 
       {/* Main Content */}
-      <main className="min-w-0 flex-1 px-5 py-6 md:px-8 md:py-8 lg:px-10">
+      <main className="min-w-0 flex-1 px-5 py-6 md:px-8 md:py-8 lg:h-dvh lg:overflow-y-auto lg:px-10">
         <div className="mx-auto w-full max-w-6xl">{children}</div>
       </main>
     </div>
