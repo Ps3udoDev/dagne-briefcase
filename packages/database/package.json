@@ -2,6 +2,9 @@
   "name": "@psicoiris/database",
   "version": "0.0.0",
   "private": true,
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
   "exports": {
     ".": "./src/index.ts",
     "./schemas": "./src/schemas.ts"
@@ -13,6 +16,7 @@
   },
   "devDependencies": {
     "@psicoiris/config": "workspace:*",
+    "@types/node": "^22.0.0",
     "typescript": "^5.8.0"
   }
 }
