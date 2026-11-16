@@ -1,6 +1,12 @@
 'use client';
 
-import { useState, useTransition, type ChangeEvent, type FormEvent } from 'react';
+import {
+  useRef,
+  useState,
+  useTransition,
+  type ChangeEvent,
+  type FormEvent,
+} from 'react';
 import { Plus, Save, Trash2, Upload } from 'lucide-react';
 import {
   createBrowserSupabaseClient,
@@ -21,6 +27,8 @@ export function ProfileEditorForm({ initialData }: ProfileEditorFormProps) {
   const [uploadingField, setUploadingField] = useState<
     'hero_image_url' | 'about_image_url' | null
   >(null);
+  const heroFileInputRef = useRef<HTMLInputElement>(null);
+  const aboutFileInputRef = useRef<HTMLInputElement>(null);
   const [isPending, startTransition] = useTransition();
 
   function updateField<K extends keyof SiteProfileInput>(
@@ -219,9 +227,20 @@ export function ProfileEditorForm({ initialData }: ProfileEditorFormProps) {
             hint="Se sube a psicoiris-media/profile"
           >
             <div className="flex flex-wrap items-center gap-3">
-              <label
-                htmlFor="hero_image_file"
-                className="inline-flex min-h-[48px] cursor-pointer items-center gap-2 rounded-full border border-mauve-border bg-surface-container-low px-5 py-2.5 text-sm font-medium text-plum-ink transition-colors hover:bg-lavender-soft/60 focus-within:ring-2 focus-within:ring-primary"
+              <input
+                ref={heroFileInputRef}
+                id="hero_image_file"
+                type="file"
+                accept="image/*"
+                disabled={uploadingField !== null}
+                onChange={(e) => handleProfileImageUpload('hero_image_url', e)}
+                className="hidden"
+              />
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={uploadingField !== null}
+                onClick={() => heroFileInputRef.current?.click()}
               >
                 <Upload className="h-4 w-4 text-primary" aria-hidden="true" />
                 {uploadingField === 'hero_image_url'
@@ -229,15 +248,7 @@ export function ProfileEditorForm({ initialData }: ProfileEditorFormProps) {
                   : form.hero_image_url
                     ? 'Cambiar foto de portada'
                     : 'Subir foto de portada'}
-                <input
-                  id="hero_image_file"
-                  type="file"
-                  accept="image/*"
-                  disabled={uploadingField !== null}
-                  onChange={(e) => handleProfileImageUpload('hero_image_url', e)}
-                  className="sr-only"
-                />
-              </label>
+              </Button>
               {form.hero_image_url && (
                 <Button
                   type="button"
@@ -339,9 +350,20 @@ export function ProfileEditorForm({ initialData }: ProfileEditorFormProps) {
             hint="Se sube a psicoiris-media/profile"
           >
             <div className="flex flex-wrap items-center gap-3">
-              <label
-                htmlFor="about_image_file"
-                className="inline-flex min-h-[48px] cursor-pointer items-center gap-2 rounded-full border border-mauve-border bg-surface-container-low px-5 py-2.5 text-sm font-medium text-plum-ink transition-colors hover:bg-lavender-soft/60 focus-within:ring-2 focus-within:ring-primary"
+              <input
+                ref={aboutFileInputRef}
+                id="about_image_file"
+                type="file"
+                accept="image/*"
+                disabled={uploadingField !== null}
+                onChange={(e) => handleProfileImageUpload('about_image_url', e)}
+                className="hidden"
+              />
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={uploadingField !== null}
+                onClick={() => aboutFileInputRef.current?.click()}
               >
                 <Upload className="h-4 w-4 text-primary" aria-hidden="true" />
                 {uploadingField === 'about_image_url'
@@ -349,15 +371,7 @@ export function ProfileEditorForm({ initialData }: ProfileEditorFormProps) {
                   : form.about_image_url
                     ? 'Cambiar retrato'
                     : 'Subir retrato'}
-                <input
-                  id="about_image_file"
-                  type="file"
-                  accept="image/*"
-                  disabled={uploadingField !== null}
-                  onChange={(e) => handleProfileImageUpload('about_image_url', e)}
-                  className="sr-only"
-                />
-              </label>
+              </Button>
               {form.about_image_url && (
                 <Button
                   type="button"
