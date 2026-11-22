@@ -68,7 +68,7 @@ export const ContactRequestInputSchema = z.object({
   reason: z.string().min(2, 'Selecciona un motivo de consulta'),
   message: z.string().max(2000).optional().or(z.literal('')),
   consent_accepted: z.literal(true, {
-    errorMap: () => ({ message: 'Debes aceptar la política de privacidad' }),
+    error: 'Debes aceptar la política de privacidad',
   }),
 });
 
