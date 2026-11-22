@@ -1,6 +1,12 @@
 'use client';
 
-import { useState, useTransition, type ChangeEvent, type FormEvent } from 'react';
+import {
+  useEffect,
+  useState,
+  useTransition,
+  type ChangeEvent,
+  type FormEvent,
+} from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, ImagePlus, Plus, Save, Trash2 } from 'lucide-react';
@@ -12,6 +18,8 @@ import {
 } from '@psicoiris/database';
 import { Button, FormField, Input, Select, Textarea } from '@psicoiris/ui';
 import { savePostAction } from '@/app/(protected)/posts/actions';
+
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 
 export interface PostEditorFormProps {
   postId?: string;
@@ -45,10 +53,20 @@ export function PostEditorForm({
   const [slugTouched, setSlugTouched] = useState(Boolean(postId));
   const [tagsText, setTagsText] = useState(initialData.tags.join(', '));
   const [uploading, setUploading] = useState(false);
+  const [localPreview, setLocalPreview] = useState<string | null>(null);
+  const [previewError, setPreviewError] = useState(false);
   const [status, setStatus] = useState<{ ok: boolean; message: string } | null>(
     null
   );
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    return () => {
+      if (localPreview) {
+        URL.revokeObjectURL(localPreview);
+      }
+    };
+  }, [localPreview]);
 
   function updateField<K extends keyof PostInput>(key: K, value: PostInput[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -66,8 +84,33 @@ export function PostEditorForm({
     const file = event.target.files?.[0];
     if (!file) return;
 
+    if (!file.type.startsWith('image/')) {
+      setStatus({
+        ok: false,
+        message: 'Solo se permiten archivos de imagen (JPG, PNG, WebP).',
+      });
+      event.target.value = '';
+      return;
+    }
+
+    if (file.size > MAX_IMAGE_BYTES) {
+      setStatus({
+        ok: false,
+        message: 'La imagen supera el límite de 5 MB. Comprímela e intenta de nuevo.',
+      });
+      event.target.value = '';
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(file);
+    setLocalPreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return objectUrl;
+    });
+    setPreviewError(false);
     setUploading(true);
     setStatus(null);
+
     try {
       const supabase = createBrowserSupabaseClient();
       const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
@@ -79,6 +122,10 @@ export function PostEditorForm({
         .upload(path, file, { upsert: true });
 
       if (uploadError) {
+        setLocalPreview((prev) => {
+          if (prev) URL.revokeObjectURL(prev);
+          return null;
+        });
         setStatus({
           ok: false,
           message: `Error al subir la imagen: ${uploadError.message}`,
@@ -91,17 +138,27 @@ export function PostEditorForm({
       } = supabase.storage.from('psicoiris-media').getPublicUrl(path);
 
       updateField('cover_image_url', publicUrl);
+      setLocalPreview((prev) => {
+        if (prev) URL.revokeObjectURL(prev);
+        return null;
+      });
+      setPreviewError(false);
       setStatus({
         ok: true,
-        message: 'Imagen de portada subida correctamente.',
+        message: 'Imagen de portada subida correctamente. Guarda la publicación para aplicarla.',
       });
     } catch {
+      setLocalPreview((prev) => {
+        if (prev) URL.revokeObjectURL(prev);
+        return null;
+      });
       setStatus({
         ok: false,
         message: 'No se pudo subir la imagen al bucket psicoiris-media.',
       });
     } finally {
       setUploading(false);
+      event.target.value = '';
     }
   }
 
@@ -302,7 +359,10 @@ export function PostEditorForm({
                 type="url"
                 placeholder="https://..."
                 value={form.cover_image_url ?? ''}
-                onChange={(e) => updateField('cover_image_url', e.target.value)}
+                onChange={(e) => {
+                  setPreviewError(false);
+                  updateField('cover_image_url', e.target.value);
+                }}
               />
             </FormField>
           </div>
@@ -318,16 +378,43 @@ export function PostEditorForm({
               className="sr-only"
             />
           </label>
+          {(localPreview || form.cover_image_url) && (
+            <Button
+              type="button"
+              variant="ghost"
+              disabled={uploading}
+              onClick={() => {
+                setPreviewError(false);
+                updateField('cover_image_url', '');
+              }}
+            >
+              Quitar portada
+            </Button>
+          )}
         </div>
 
-        {form.cover_image_url && (
-          <div className="overflow-hidden rounded-xl border border-mauve-border/50 bg-surface-container-low">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={form.cover_image_url}
-              alt={form.cover_image_alt || 'Vista previa de portada'}
-              className="max-h-64 w-full object-cover"
-            />
+        {(localPreview || form.cover_image_url) && (
+          <div className="space-y-1.5">
+            {previewError ? (
+              <p className="rounded-xl border border-error/30 bg-error/5 px-4 py-3 text-xs text-error">
+                No se pudo cargar la vista previa de la imagen de portada. Verifica la URL o sube otro archivo.
+              </p>
+            ) : (
+              <div className="overflow-hidden rounded-xl border border-mauve-border/50 bg-surface-container-low">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={localPreview || form.cover_image_url || ''}
+                  alt={form.cover_image_alt || 'Vista previa de portada'}
+                  onError={() => setPreviewError(true)}
+                  className="max-h-64 w-full object-cover"
+                />
+              </div>
+            )}
+            <p className="text-xs text-on-surface-variant">
+              {uploading
+                ? 'Subiendo vista previa al servidor...'
+                : 'Vista previa lista. Guarda la publicación para reflejarla en la web.'}
+            </p>
           </div>
         )}
 

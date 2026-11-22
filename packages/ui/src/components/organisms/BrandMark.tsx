@@ -1,10 +1,10 @@
-import { useId } from 'react';
 import { cn } from '../../lib/cn';
 
 export interface BrandMarkProps {
   size?: number;
   showWordmark?: boolean;
   subtitle?: string;
+  idPrefix?: string;
   className?: string;
 }
 
@@ -12,11 +12,11 @@ export function BrandMark({
   size = 36,
   showWordmark = true,
   subtitle = 'Psicología Clínica',
+  idPrefix = 'psicoiris-mark',
   className,
 }: BrandMarkProps) {
-  const uid = useId();
-  const bgGradId = `psicoiris-bg-${uid}`;
-  const archGradId = `psicoiris-arch-${uid}`;
+  const bgGradId = `${idPrefix}-bg`;
+  const archGradId = `${idPrefix}-arch`;
 
   return (
     <span className={cn('inline-flex items-center gap-3', className)}>

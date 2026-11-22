@@ -42,7 +42,7 @@ export function Navbar({ clinicianTitle = 'Psicología Clínica' }: NavbarProps)
           className="inline-flex min-h-[48px] items-center rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
           aria-label="Inicio · Psicoiris"
         >
-          <BrandMark size={36} subtitle={clinicianTitle} />
+          <BrandMark size={36} subtitle={clinicianTitle} idPrefix="web-navbar" />
         </Link>
 
         <nav aria-label="Navegación principal" className="flex items-center gap-space-sm">

@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Clock } from 'lucide-react';
 import { Badge } from '@psicoiris/ui';
+import { ResilientImage } from '@/components/atoms/ResilientImage';
 import { Footer } from '@/components/organisms/Footer';
 import { Navbar } from '@/components/organisms/Navbar';
 import { fetchPublishedPostsSafe, fetchSiteProfileSafe } from '@/lib/queries';
@@ -65,7 +65,7 @@ export default async function ArticlesPage() {
                         href={`/articulos/${post.slug}`}
                         className="block overflow-hidden"
                       >
-                        <Image
+                        <ResilientImage
                           src={post.cover_image_url}
                           alt={post.cover_image_alt || post.title}
                           width={640}

@@ -16,7 +16,7 @@ export function Footer({ profile }: FooterProps) {
         <div className="mb-space-xl grid grid-cols-1 gap-gutter-desktop md:grid-cols-12">
           <div className="flex flex-col gap-space-sm md:col-span-5">
             <Link href="/" className="inline-flex w-fit items-center">
-              <BrandMark size={32} subtitle={profile.clinician_title} />
+              <BrandMark size={32} subtitle={profile.clinician_title} idPrefix="web-footer" />
             </Link>
             <p className="max-w-sm text-base leading-relaxed text-on-surface-variant">
               Un espacio de escucha analítica, contención serena y rigor profesional para

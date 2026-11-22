@@ -1,9 +1,9 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowDown, Calendar, Lock, ShieldCheck, Sparkles } from 'lucide-react';
 import type { SiteProfile } from '@psicoiris/database';
 import { Reveal, ScrollDrift } from '@psicoiris/motion';
 import { Badge, BrandMark } from '@psicoiris/ui';
+import { ResilientImage } from '@/components/atoms/ResilientImage';
 import { HeroAmbient } from './HeroAmbient';
 
 export interface HeroSectionProps {
@@ -71,22 +71,43 @@ export function HeroSection({ profile }: HeroSectionProps) {
             </div>
           </Reveal>
 
-          <Reveal delay={120} className="relative mt-space-md lg:col-span-5 lg:mt-0">
+          <div className="relative mt-space-md lg:col-span-5 lg:mt-0">
             <ScrollDrift>
               <div className="relative rounded-3xl bg-surface-container-low p-3 shadow-calmed">
               <div className="relative overflow-hidden rounded-2xl">
                 {profile.hero_image_url ? (
-                  <Image
+                  <ResilientImage
                     src={profile.hero_image_url}
                     alt={`${profile.clinician_name} - ${profile.clinician_title}`}
                     width={640}
                     height={720}
                     priority
                     className="h-[380px] w-full object-cover md:h-[480px]"
+                    fallback={
+                      <div className="flex h-[380px] w-full flex-col items-center justify-center bg-gradient-to-br from-surface-container-lowest via-rose-dust to-lavender-soft/70 p-8 text-center md:h-[480px]">
+                        <BrandMark
+                          size={84}
+                          showWordmark={false}
+                          idPrefix="web-hero-fallback"
+                          className="mb-6"
+                        />
+                        <p className="font-serif text-2xl italic text-plum-ink">
+                          {profile.clinician_name}
+                        </p>
+                        <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-on-surface-variant">
+                          {profile.clinician_title}
+                        </p>
+                      </div>
+                    }
                   />
                 ) : (
                   <div className="flex h-[380px] w-full flex-col items-center justify-center bg-gradient-to-br from-surface-container-lowest via-rose-dust to-lavender-soft/70 p-8 text-center md:h-[480px]">
-                    <BrandMark size={84} showWordmark={false} className="mb-6" />
+                    <BrandMark
+                      size={84}
+                      showWordmark={false}
+                      idPrefix="web-hero"
+                      className="mb-6"
+                    />
                     <p className="font-serif text-2xl italic text-plum-ink">
                       {profile.clinician_name}
                     </p>
@@ -111,7 +132,7 @@ export function HeroSection({ profile }: HeroSectionProps) {
               </div>
             </div>
             </ScrollDrift>
-          </Reveal>
+          </div>
         </div>
       </div>
     </section>

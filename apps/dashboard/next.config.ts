@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   basePath: '/dashboard',
   transpilePackages: ['@psicoiris/ui', '@psicoiris/motion', '@psicoiris/database'],
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',

@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
     '@psicoiris/database',
   ],
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
