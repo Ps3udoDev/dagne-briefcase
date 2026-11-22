@@ -92,7 +92,7 @@ export function DashboardShell({ userEmail, children }: DashboardShellProps) {
           href="/"
           className="rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         >
-          <BrandMark size={34} subtitle="Panel Clínico" />
+          <BrandMark size={34} subtitle="Panel Clínico" idPrefix="dash-mobile" />
         </Link>
 
         <button
@@ -142,7 +142,7 @@ export function DashboardShell({ userEmail, children }: DashboardShellProps) {
             href="/"
             className="inline-block rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
-            <BrandMark size={38} subtitle="Panel Clínico" />
+            <BrandMark size={38} subtitle="Panel Clínico" idPrefix="dash-sidebar" />
           </Link>
           {navLinks}
         </div>

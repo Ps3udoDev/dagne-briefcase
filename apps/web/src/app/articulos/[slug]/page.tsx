@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, BookMarked, Clock, ExternalLink } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { Badge } from '@psicoiris/ui';
+import { ResilientImage } from '@/components/atoms/ResilientImage';
 import { Footer } from '@/components/organisms/Footer';
 import { Navbar } from '@/components/organisms/Navbar';
 import { fetchPostBySlugSafe, fetchSiteProfileSafe } from '@/lib/queries';
@@ -100,7 +100,7 @@ export default async function ArticleDetailPage({
 
           {post.cover_image_url && (
             <figure className="mb-space-xl overflow-hidden rounded-3xl shadow-calmed">
-              <Image
+              <ResilientImage
                 src={post.cover_image_url}
                 alt={post.cover_image_alt || post.title}
                 width={1200}

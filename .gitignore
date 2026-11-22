@@ -26,3 +26,7 @@ Thumbs.db
 
 .vercel
 .env*
+
+
+# Client proposals (local only)
+docs/propuestas/

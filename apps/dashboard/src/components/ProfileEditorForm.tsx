@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  useEffect,
   useRef,
   useState,
   useTransition,
@@ -15,6 +16,8 @@ import {
 import { Button, FormField, Input, Textarea } from '@psicoiris/ui';
 import { saveProfileAction } from '@/app/(protected)/perfil/actions';
 
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+
 export interface ProfileEditorFormProps {
   initialData: SiteProfileInput;
 }
@@ -27,9 +30,28 @@ export function ProfileEditorForm({ initialData }: ProfileEditorFormProps) {
   const [uploadingField, setUploadingField] = useState<
     'hero_image_url' | 'about_image_url' | null
   >(null);
+  const [localPreviews, setLocalPreviews] = useState<{
+    hero_image_url: string | null;
+    about_image_url: string | null;
+  }>({ hero_image_url: null, about_image_url: null });
+  const [previewErrors, setPreviewErrors] = useState<{
+    hero_image_url: boolean;
+    about_image_url: boolean;
+  }>({ hero_image_url: false, about_image_url: false });
   const heroFileInputRef = useRef<HTMLInputElement>(null);
   const aboutFileInputRef = useRef<HTMLInputElement>(null);
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    return () => {
+      if (localPreviews.hero_image_url) {
+        URL.revokeObjectURL(localPreviews.hero_image_url);
+      }
+      if (localPreviews.about_image_url) {
+        URL.revokeObjectURL(localPreviews.about_image_url);
+      }
+    };
+  }, [localPreviews.hero_image_url, localPreviews.about_image_url]);
 
   function updateField<K extends keyof SiteProfileInput>(
     key: K,
@@ -45,8 +67,33 @@ export function ProfileEditorForm({ initialData }: ProfileEditorFormProps) {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    if (!file.type.startsWith('image/')) {
+      setStatus({
+        ok: false,
+        message: 'Solo se permiten archivos de imagen (JPG, PNG, WebP).',
+      });
+      event.target.value = '';
+      return;
+    }
+
+    if (file.size > MAX_IMAGE_BYTES) {
+      setStatus({
+        ok: false,
+        message: 'La imagen supera el límite de 5 MB. Comprímela e intenta de nuevo.',
+      });
+      event.target.value = '';
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(file);
+    setLocalPreviews((prev) => {
+      if (prev[field]) URL.revokeObjectURL(prev[field]);
+      return { ...prev, [field]: objectUrl };
+    });
+    setPreviewErrors((prev) => ({ ...prev, [field]: false }));
     setUploadingField(field);
     setStatus(null);
+
     try {
       const supabase = createBrowserSupabaseClient();
       const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
@@ -58,6 +105,10 @@ export function ProfileEditorForm({ initialData }: ProfileEditorFormProps) {
         .upload(path, file, { upsert: true });
 
       if (uploadError) {
+        setLocalPreviews((prev) => {
+          if (prev[field]) URL.revokeObjectURL(prev[field]);
+          return { ...prev, [field]: null };
+        });
         setStatus({
           ok: false,
           message: `Error al subir la imagen: ${uploadError.message}`,
@@ -70,11 +121,20 @@ export function ProfileEditorForm({ initialData }: ProfileEditorFormProps) {
       } = supabase.storage.from('psicoiris-media').getPublicUrl(path);
 
       updateField(field, publicUrl);
+      setLocalPreviews((prev) => {
+        if (prev[field]) URL.revokeObjectURL(prev[field]);
+        return { ...prev, [field]: null };
+      });
+      setPreviewErrors((prev) => ({ ...prev, [field]: false }));
       setStatus({
         ok: true,
         message: 'Imagen subida a psicoiris-media/profile. Guarda los cambios para publicarla.',
       });
     } catch {
+      setLocalPreviews((prev) => {
+        if (prev[field]) URL.revokeObjectURL(prev[field]);
+        return { ...prev, [field]: null };
+      });
       setStatus({
         ok: false,
         message: 'No se pudo subir la imagen al bucket psicoiris-media.',
@@ -260,12 +320,29 @@ export function ProfileEditorForm({ initialData }: ProfileEditorFormProps) {
               )}
             </div>
           </FormField>
-          {form.hero_image_url && (
-            <img
-              src={form.hero_image_url}
-              alt="Vista previa de portada"
-              className="h-40 w-full max-w-xs rounded-2xl border border-mauve-border/60 object-cover"
-            />
+          {(localPreviews.hero_image_url || form.hero_image_url) && (
+            <div className="space-y-1.5">
+              {previewErrors.hero_image_url ? (
+                <p className="rounded-xl border border-error/30 bg-error/5 px-4 py-3 text-xs text-error">
+                  No se pudo cargar la vista previa de la foto de portada. Intenta subirla de nuevo.
+                </p>
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={localPreviews.hero_image_url || form.hero_image_url || ''}
+                  alt="Vista previa de portada"
+                  onError={() =>
+                    setPreviewErrors((prev) => ({ ...prev, hero_image_url: true }))
+                  }
+                  className="h-44 w-full max-w-xs rounded-2xl border border-mauve-border/60 object-cover"
+                />
+              )}
+              <p className="text-xs text-on-surface-variant">
+                {uploadingField === 'hero_image_url'
+                  ? 'Subiendo vista previa al servidor...'
+                  : 'Vista previa lista. Pulsa «Guardar portafolio» para reflejarla en la web.'}
+              </p>
+            </div>
           )}
         </div>
       </section>
@@ -383,12 +460,29 @@ export function ProfileEditorForm({ initialData }: ProfileEditorFormProps) {
               )}
             </div>
           </FormField>
-          {form.about_image_url && (
-            <img
-              src={form.about_image_url}
-              alt="Vista previa de retrato profesional"
-              className="h-40 w-full max-w-xs rounded-2xl border border-mauve-border/60 object-cover"
-            />
+          {(localPreviews.about_image_url || form.about_image_url) && (
+            <div className="space-y-1.5">
+              {previewErrors.about_image_url ? (
+                <p className="rounded-xl border border-error/30 bg-error/5 px-4 py-3 text-xs text-error">
+                  No se pudo cargar la vista previa del retrato profesional. Intenta subirlo de nuevo.
+                </p>
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={localPreviews.about_image_url || form.about_image_url || ''}
+                  alt="Vista previa de retrato profesional"
+                  onError={() =>
+                    setPreviewErrors((prev) => ({ ...prev, about_image_url: true }))
+                  }
+                  className="h-44 w-full max-w-xs rounded-2xl border border-mauve-border/60 object-cover"
+                />
+              )}
+              <p className="text-xs text-on-surface-variant">
+                {uploadingField === 'about_image_url'
+                  ? 'Subiendo vista previa al servidor...'
+                  : 'Vista previa lista. Pulsa «Guardar portafolio» para reflejarla en la web.'}
+              </p>
+            </div>
           )}
         </div>
       </section>

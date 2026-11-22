@@ -1,9 +1,9 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Quote } from 'lucide-react';
 import type { SiteProfile } from '@psicoiris/database';
 import { Reveal, ScrollDrift } from '@psicoiris/motion';
 import { BrandMark } from '@psicoiris/ui';
+import { ResilientImage } from '@/components/atoms/ResilientImage';
 
 export interface AboutSectionProps {
   profile: SiteProfile;
@@ -46,16 +46,34 @@ export function AboutSection({ profile }: AboutSectionProps) {
             <ScrollDrift>
               <div className="relative overflow-hidden rounded-3xl shadow-calmed">
               {profile.about_image_url ? (
-                <Image
+                <ResilientImage
                   src={profile.about_image_url}
                   alt={`Consulta de ${profile.clinician_name}`}
                   width={600}
                   height={480}
                   className="h-[340px] w-full object-cover md:h-[420px]"
+                  fallback={
+                    <div className="flex h-[340px] w-full flex-col items-center justify-center bg-gradient-to-br from-rose-dust via-surface-container-lowest to-lavender-soft/60 p-8 text-center md:h-[420px]">
+                      <BrandMark
+                        size={64}
+                        showWordmark={false}
+                        idPrefix="web-about-fallback"
+                        className="mb-4"
+                      />
+                      <p className="font-serif text-xl italic text-plum-ink">
+                        Un encuentro humano con rigor clínico
+                      </p>
+                    </div>
+                  }
                 />
               ) : (
                 <div className="flex h-[340px] w-full flex-col items-center justify-center bg-gradient-to-br from-rose-dust via-surface-container-lowest to-lavender-soft/60 p-8 text-center md:h-[420px]">
-                  <BrandMark size={64} showWordmark={false} className="mb-4" />
+                  <BrandMark
+                    size={64}
+                    showWordmark={false}
+                    idPrefix="web-about"
+                    className="mb-4"
+                  />
                   <p className="font-serif text-xl italic text-plum-ink">
                     Un encuentro humano con rigor clínico
                   </p>

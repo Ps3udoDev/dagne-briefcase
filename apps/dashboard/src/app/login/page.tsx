@@ -71,7 +71,7 @@ export default function LoginPage() {
       <Reveal className="relative z-10 w-full max-w-md">
         <section className="rounded-3xl border border-mauve-border/70 bg-surface-container-lowest/95 p-6 shadow-calmed backdrop-blur-sm md:p-8">
           <div className="mb-8 flex flex-col items-center text-center">
-            <BrandMark size={48} subtitle="Panel Clínico" />
+            <BrandMark size={48} subtitle="Panel Clínico" idPrefix="dash-login" />
             <h1 className="mt-6 font-serif text-2xl font-normal text-plum-ink md:text-3xl">
               Bienvenida de nuevo
             </h1>
